@@ -2,7 +2,7 @@
 
 **Author:** qiangxinglin
 
-**Version:** 0.0.1
+**Version:** 0.0.2
 
 **Type:** tool
 
@@ -17,6 +17,9 @@ The built-in `Doc Extractor` would convert input `.xlsx` file to markdown table 
 
 
 ## Usage
+> [!IMPORTANT]
+> Correctly configure the **`FILES_URL`** in your `docker-compose.yaml` or [`.env`](https://github.com/langgenius/dify/blob/main/docker/.env.example#L48) in advance.
+
 ![](_assets/workflow_usage.png)
 
 ## Tools
