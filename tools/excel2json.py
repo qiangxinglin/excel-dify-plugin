@@ -10,7 +10,8 @@ class Excel2JsonTool(Tool):
     def _invoke(self, tool_parameters: dict[str, Any]) -> Generator[ToolInvokeMessage]:
         file_meta = tool_parameters['file']
         try:
-            df = pd.read_excel(file_meta.url, dtype=str)
+            storage_options = {'User-Agent': 'Mozilla/5.0'}
+            df = pd.read_excel(file_meta.url,storage_options=storage_options, dtype=str)
         except Exception as e:
             raise Exception(f"Error reading Excel file: {str(e)}")
 
