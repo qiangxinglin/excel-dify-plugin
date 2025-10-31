@@ -28,6 +28,7 @@ The built-in `Doc Extractor` would convert input `.xlsx` file to markdown table 
 
 - The output is placed in the `text` output field rather than the `json` field in order to preserving the header order.
 - All cells are parsed as **string**, no matter what it is.
+- If the uploaded Excel file contains multiple sheets, the plugin will automatically convert it into a JSON object, where each key is the sheet name and the value is the data array of the corresponding sheet.
 
 | Name | Age | Date |
 |------|-----|------|
@@ -40,6 +41,7 @@ The built-in `Doc Extractor` would convert input `.xlsx` file to markdown table 
 ### json → xlsx
 
 - The output filename can be configured, default `Converted_Data`
+- If the input JSON is an object (whose values are arrays), the plugin will automatically create a multi-sheet Excel file, where each key of the object will become a sheet name.
 
 ![](_assets/workflow_run.png)
 ![](_assets/output_xlsx.png)
