@@ -52,6 +52,7 @@ The built-in `Doc Extractor` would convert input `.xlsx` file to markdown table 
 - [pandas](https://github.com/pandas-dev/pandas), BSD 3-Clause License
 
 ## Changelog
+- **0.0.4**: Add missing dependency (xlrd)
 - **0.0.3**: Add multi-sheet support for Excel processing (closes #13)
 
 ## License
