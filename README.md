@@ -2,7 +2,7 @@
 
 **Author:** qiangxinglin
 
-**Version:** 0.0.3
+**Version:** 0.0.5
 
 **Type:** tool
 
@@ -46,12 +46,126 @@ The built-in `Doc Extractor` would convert input `.xlsx` file to markdown table 
 ![](_assets/workflow_run.png)
 ![](_assets/output_xlsx.png)
 
+#### Format Settings
+
+The plugin supports optional formatting for row heights and column widths using the `[format]` reserved key.
+
+> **Note:** Excel prohibits sheet names containing these characters: `/ \ ? * : [ ]`
+> Therefore, `[format]` is guaranteed to never conflict with actual sheet names.
+
+##### `[format]` Structure
+
+```json
+{
+  "[format]": {
+    "defaults": {
+      "rowHeight": 20,           // Default height for all rows
+      "columnWidth": 15,         // Default width for all columns
+      "rowHeights": {            // Specific row heights (1-based)
+        "1": 30,                 // Row 1 height = 30
+        "2": 25                  // Row 2 height = 25
+      },
+      "columnWidths": {          // Specific column widths
+        "A": 25,                 // Column A width = 25
+        "B": 15                  // Column B width = 15
+      }
+    },
+    "sheets": {
+      "SheetName": {             // Per-sheet overrides
+        "rowHeight": 22,
+        "columnWidth": 18,
+        "rowHeights": {"1": 28},
+        "columnWidths": {"A": 30, "B": 20}
+      }
+    }
+  },
+  "SheetName": [...]             // Actual data
+}
+```
+
+##### Format Priority Rules
+
+Settings are applied in the following order (later overrides earlier):
+
+1. `[format].defaults.rowHeight` / `columnWidth` - Global defaults for all rows/columns
+2. `[format].sheets.<name>.rowHeight` / `columnWidth` - Per-sheet defaults
+3. `[format].defaults.rowHeights` / `columnWidths` - Global specific rows/columns
+4. `[format].sheets.<name>.rowHeights` / `columnWidths` - Per-sheet specific rows/columns
+
+##### Validation and Warnings
+
+- **Unknown sheet references**: If `[format].sheets` references a sheet that doesn't exist in the data, a warning will be displayed and those configurations will be ignored. The Excel file will still be generated successfully.
+- **Type errors**: If format values have incorrect types (e.g., non-dict, negative numbers), an error will be thrown and the Excel generation will fail.
+
+##### Examples
+
+**Single sheet with global formatting:**
+
+```json
+{
+  "[format]": {
+    "defaults": {
+      "rowHeight": 20,
+      "columnWidth": 15
+    }
+  },
+  "Sheet1": [
+    {"Name": "John", "Age": "18"},
+    {"Name": "Doe", "Age": "20"}
+  ]
+}
+```
+
+**Multiple sheets with per-sheet formatting:**
+
+```json
+{
+  "[format]": {
+    "defaults": {
+      "rowHeight": 18
+    },
+    "sheets": {
+      "Employees": {
+        "columnWidths": {"A": 25, "B": 15},
+        "rowHeights": {"1": 30}
+      },
+      "Departments": {
+        "columnWidths": {"A": 20}
+      }
+    }
+  },
+  "Employees": [{"Name": "John", "Department": "R&D"}],
+  "Departments": [{"ID": "1", "Name": "HR"}]
+}
+```
+
+**Column identifiers:**
+
+You can use either Excel letters or 1-based numeric indexes:
+
+```json
+{
+  "[format]": {
+    "defaults": {
+      "columnWidths": {
+        "A": 25,    // Letter format
+        "1": 25,    // Numeric format (same as "A")
+        "B": 15,
+        "2": 15     // Same as "B"
+      }
+    }
+  },
+  "Sheet1": [...]
+}
+```
+
 
 ## Used Open sourced projects
 
 - [pandas](https://github.com/pandas-dev/pandas), BSD 3-Clause License
 
 ## Changelog
+- **0.0.5**: Add `[format]` metadata support for controlling row heights and column widths during JSON → Excel conversion
 - **0.0.4**: Add missing dependency (xlrd)
 - **0.0.3**: Add multi-sheet support for Excel processing (closes #13)
 
