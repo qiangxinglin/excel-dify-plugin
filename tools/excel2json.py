@@ -10,13 +10,14 @@ import pandas as pd
 class Excel2JsonTool(Tool):
     def _invoke(self, tool_parameters: dict[str, Any]) -> Generator[ToolInvokeMessage]:
         file_meta = tool_parameters['file']
+        storage_options = {'User-Agent': 'Mozilla/5.0'}
         try:
             xls = pd.ExcelFile(file_meta.url)
             sheet_names = xls.sheet_names
 
             if len(sheet_names) > 1:
                 # Multiple sheets
-                all_sheets_data = pd.read_excel(file_meta.url, sheet_name=None, dtype=str)
+                all_sheets_data = pd.read_excel(file_meta.url, sheet_name=None, dtype=str, storage_options=storage_options)
                 json_output = {}
                 for sheet_name, df in all_sheets_data.items():
                     # Convert DataFrame to a list of records (dicts)
@@ -26,7 +27,7 @@ class Excel2JsonTool(Tool):
                 yield self.create_text_message(json.dumps(json_output, ensure_ascii=False, indent=2))
             else:
                 # Single sheet
-                df = pd.read_excel(file_meta.url, dtype=str)
+                df = pd.read_excel(file_meta.url, dtype=str, storage_options=storage_options)
                 yield self.create_text_message(df.to_json(orient="records", force_ascii=False))
 
         except Exception as e:
